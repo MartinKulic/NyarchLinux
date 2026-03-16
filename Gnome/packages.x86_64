@@ -345,6 +345,9 @@ timeshift
 #timeshift-autosnap
 tuned-ppd
 
+# Added
+grub-theme-Nyarch
+
 # Chaotic
 chaotic-mirrorlist
 chaotic-keyring
