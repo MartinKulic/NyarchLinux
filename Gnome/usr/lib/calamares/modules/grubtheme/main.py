@@ -4,6 +4,7 @@ import os
 import subprocess
 import re
 import libcalamares
+import glob
 
 
 def detect_resolution():
@@ -73,17 +74,20 @@ def run():
 
     try:
 
+        pkg = glob.glob("/opt/ezrepo/grub-theme-Nyarch*.pkg.tar.zst")[0]
+
         cmd = [
             "pacman",
             "-U",
             "--noconfirm",
-            f"{package_path}*.pkg.tar.zst"
+            pkg
         ]
+
 
         libcalamares.utils.debug(
             f"Running: {' '.join(cmd)}"
         )
-
+        
         result = libcalamares.utils.target_env_call(cmd)
 
         if result != 0:
