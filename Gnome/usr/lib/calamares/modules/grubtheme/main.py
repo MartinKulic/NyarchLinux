@@ -27,62 +27,56 @@ def detect_resolution():
 def run():
 
     root_mount_point = libcalamares.globalstorage.value("rootMountPoint")
+    temp_res_file_path = None
 
     if not root_mount_point:
-        return "Root mount point not found"
-
-    libcalamares.utils.debug(
-        f"Target root: {root_mount_point}"
-    )
-
-    # --------------------
-    # Detect resolution
-    # --------------------
-
-    resolution = detect_resolution()
-
-    if resolution:
-
-        output_file = os.path.join(
-            root_mount_point,
-            "tmp",
-            "grub_res"
-        )
-
-        os.makedirs(
-            os.path.dirname(output_file),
-            exist_ok=True
-        )
-
-        with open(output_file, "w") as f:
-            f.write(resolution)
-
-        libcalamares.utils.debug(
-            f"Resolution {resolution} saved"
-        )
-
+        libcalamares.utils.warning("Root mount point not found - skipping module resolution detection")
+    
     else:
-        libcalamares.utils.warning(
-            "Resolution detection failed"
+        libcalamares.utils.debug(
+            f"Target root: {root_mount_point}"
         )
 
-    # --------------------
-    # Install package
-    # --------------------
+        # Detect resolution - from live env
+        resolution = detect_resolution()
 
-    package_path = "/opt/ezrepo/grub-theme-Nyarch"
+        if resolution:
+            # Save resolution to tmp file
 
+            temp_res_file_path = os.path.join(
+                root_mount_point,
+                "tmp",
+                "grub_res"
+            )
+
+            os.makedirs(
+                os.path.dirname(temp_res_file_path),
+                exist_ok=True
+            )
+
+            with open(temp_res_file_path, "w") as f:
+                f.write(resolution)
+
+            libcalamares.utils.debug(
+                f"Resolution {resolution} saved"
+            )
+
+        else:
+            libcalamares.utils.warning(
+                "Module resolution detection failed"
+            )
+
+    # Install package - to target env
     try:
 
-        pkg = glob.glob("/opt/ezrepo/grub-theme-Nyarch*.pkg.tar.zst")[0]
+        pkg_path = glob.glob("/opt/ezrepo/grub-theme-Nyarch*.pkg.tar.zst")[0]
 
         cmd = [
             "pacman",
             "-U",
             "--noconfirm",
-            pkg
+            pkg_path
         ]
-
 
         libcalamares.utils.debug(
             f"Running: {' '.join(cmd)}"
@@ -91,10 +85,20 @@ def run():
         result = libcalamares.utils.target_env_call(cmd)
 
         if result != 0:
-            return "Failed to install grub theme package"
+            libcalamares.utils.warning("Error while installing package via pacman")
 
     except Exception as e:
-        return f"Pacman failed: {e}"
+        libcalamares.utils.warning(f"Pacman failed: {e}")
 
+    
+    # Clean tmp file
+    if temp_res_file_path:
+        try:
+            os.remove(temp_res_file_path)
+        except Exception as e:
+            libcalamares.utils.debug(f"Fail to remove tmp file:\n{e}")
+   
+
+    # End
     return None
 
