@@ -93,10 +93,11 @@ def run():
     
     # Clean tmp file
     if temp_res_file_path:
+        libcalamares.utils.debug("Removind tmp file")
         try:
             os.remove(temp_res_file_path)
         except Exception as e:
-            libcalamares.utils.debug(f"Fail to remove tmp file:\n{e}")
+            libcalamares.utils.warning(f"Fail to remove tmp file:\n{e}")
    
 
     # End
