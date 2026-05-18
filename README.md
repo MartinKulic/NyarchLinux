@@ -33,4 +33,4 @@ Please note that we want to make the different spins as coherent as possible, so
 For example, in the Gnome spin Komikku, a GTK application to read mangas, is preinstalled. In a KDE Plasma spin, if there is a similar application written using QT, it should be included.
 
 ## Mirror lists: 
-[Mousecorp Open Source Labs](https://mousecorp.xyz/pub/linux/nyarch/) Tier 0 
+[Mousecorp Open Source Labs](https://mousecorp.xyz/nyarch/) Tier 0 
