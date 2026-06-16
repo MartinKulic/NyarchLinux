@@ -1,0 +1,15 @@
+#!/bin/sh
+exec tail -n +3 $0
+# 
+# Power submenu
+# 
+submenu "Power" --class power {
+    menuentry "Shutdown" --class shutdown {
+        halt
+    }
+
+    menuentry "Reboot" --class reboot {
+        reboot
+    }
+}
+
